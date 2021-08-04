@@ -33,7 +33,7 @@ Font::Font(const char* fontPath, int size) {
 
 Character charCreator(FT_Face face, unsigned char c) {
     if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
-        throw "Invalid Character";
+        throw "Invalid Character or Face";
     }
 
     unsigned int texture;
@@ -120,21 +120,21 @@ void Font::changeMode(FontMode mode) {
     this->mode = mode;
 }
 
-void Font::getTextSize(std::string text, float &width, float &height) {
+void Font::getTextSize(std::string text, float &width, float &height, float scale) {
     std::map<char, Character> chars = getChars();
 
     float w = 0;
 
-    float xOffset = chars[text.at(0)].bearing.x + chars[text.at(text.size()-1)].bearing.x;
+    float xOffset = chars[text.at(0)].bearing.x * scale + chars[text.at(text.size()-1)].bearing.x * scale;
 
     for (int i = 0; i < text.size(); i++) {
         Character c = chars[text.at(i)];
 
-        w += c.bearing.x + c.size.x;
+        w += (c.advance >> 6) * scale;
     }
 
     width = w - xOffset;
-    height = chars[text.at(0)].size.y;
+    height = chars[text.at(0)].size.y * scale;
 }
 
 const char* Font::getFontPath() {

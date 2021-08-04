@@ -6,11 +6,7 @@ namespace textureManager {
 
     void activateTexture(unsigned int id, unsigned int level = 0);
 
-    void createTextures();
-}
-
-namespace textures {
-    extern unsigned int test;
+    void deactivateTexture(unsigned int level = 0);
 }
 
 #endif

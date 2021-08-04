@@ -9,6 +9,8 @@
 #include "FrameTimer.hpp"
 #include "stats.hpp"
 
+#include "Transform.hpp"
+
 class Window {
     public:
         Window(const char* title, int width, int height);

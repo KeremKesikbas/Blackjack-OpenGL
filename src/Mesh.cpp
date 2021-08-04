@@ -30,6 +30,12 @@ void Mesh::draw() {
 
     glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 
+    if (mode != COLOR) {
+        for (int i = 0; i < textures.size(); i++) {
+            textureManager::deactivateTexture(i);
+        }
+    }
+
     buffers->deactivate();
 }
 

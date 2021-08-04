@@ -13,9 +13,12 @@
 #include "Fonts.hpp"
 #include "shaderSources.hpp"
 #include "Graphics.hpp"
+#include "Card.hpp"
 
 #include <glad/glad.h>
 #include <algorithm>
+
+#include <time.h>
 
 using namespace std;
 
@@ -27,14 +30,13 @@ void windowHints();
 void glSettings();
 
 Window* window;
-
 Program* shaderProgram;
-
 MeshFactory* meshFactory;
+CardManager* cm;
 
 bool control = true;
 
-Shape* rect;
+Shape* background;
 
 int main(int argc, char *argv[]) {
 
@@ -46,6 +48,10 @@ int main(int argc, char *argv[]) {
 
     while (window->frameTimer->isRunning) {
         glClear(GL_COLOR_BUFFER_BIT);
+
+        background->draw();
+
+        cm->renderCards();
 
         windowEvents();
     }
@@ -77,7 +83,10 @@ bool init() {
 
     window->centerLocation();
 
-    window->setBackgroundColor(30, 30, 30);
+    window->setBackgroundColor(6, 106, 0);
+
+    // Random
+    srand(time(NULL));
 
     // Input
     inputManager::key_input = new KeyInput(window);
@@ -113,15 +122,33 @@ bool init() {
         return false;
     }
 
-    // Loading Textures
-    textureManager::createTextures();
-
     // Loading Fonts
-    fonts::open_sans = new Font("data/fonts/open_sans/", 30);
+    fonts::open_sans = new Font("data/fonts/open_sans/", 46);
 
     graphics::g->setFont(fonts::open_sans);
 
     fonts::open_sans->changeMode(LIGHT);
+
+    ///////////////////////////////////////////////// - Loading Game
+
+    // init background
+    background = graphics::g->createRectangle(WIDTH, HEIGHT);
+
+    background->setX(0);
+    background->setY(0);
+
+    background->addTexture(textureManager::loadTexture("data/images/bg.png"));
+    background->setColorMode(TEXTURE);
+
+    // init cards
+
+    cm = new CardManager();
+
+    cm->addPlayerCard(cm->random());
+    cm->addPlayerCard(cm->random());
+
+    cm->addDealerCard(cm->random());
+    cm->addDealerCard(cm->random());
 
     return true;
 }
@@ -141,7 +168,7 @@ void windowEvents() {
 ////////////////////////////////////////////
 
 void windowHints() {
-    glfwWindowHint(GLFW_DECORATED, 0);
+    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);

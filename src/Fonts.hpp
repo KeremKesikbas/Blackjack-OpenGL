@@ -40,7 +40,7 @@ class Font {
 
         std::map<char, Character> getChars();
 
-        void getTextSize(std::string text, float &width, float &height);
+        void getTextSize(std::string text, float &width, float &height, float scale);
 
     private:
         std::map<char, Character> load(FT_Face face);
