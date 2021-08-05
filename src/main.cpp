@@ -14,6 +14,7 @@
 #include "shaderSources.hpp"
 #include "Graphics.hpp"
 #include "Card.hpp"
+#include "Buttons.hpp"
 
 #include <glad/glad.h>
 #include <algorithm>
@@ -38,6 +39,11 @@ bool control = true;
 
 Shape* background;
 
+//
+StandButton* sb;
+HitButton* hb;
+RestartButton* rb;
+
 int main(int argc, char *argv[]) {
 
     control = init();
@@ -50,6 +56,14 @@ int main(int argc, char *argv[]) {
         glClear(GL_COLOR_BUFFER_BIT);
 
         background->draw();
+
+        sb->renderStand();
+        hb->renderHit();
+        rb->renderRestart();
+
+        sb->eventStand(cm);
+        hb->eventHit(cm);
+        rb->eventRestart(cm);
 
         cm->renderCards();
 
@@ -127,8 +141,6 @@ bool init() {
 
     graphics::g->setFont(fonts::open_sans);
 
-    fonts::open_sans->changeMode(LIGHT);
-
     ///////////////////////////////////////////////// - Loading Game
 
     // init background
@@ -149,6 +161,11 @@ bool init() {
 
     cm->addDealerCard(cm->random());
     cm->addDealerCard(cm->random());
+
+    // Buttons
+    sb = new StandButton();
+    hb = new HitButton();
+    rb = new RestartButton();
 
     return true;
 }

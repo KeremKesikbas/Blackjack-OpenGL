@@ -65,19 +65,19 @@ void Graphics::renderText(std::string text, float scale) {
         Character ch = chars[text.at(i)];
 
         float xpos = deltaX + ch.bearing.x * scale - xOffset;
-        float ypos = y - (ch.size.y - ch.bearing.y) * scale;
+        float ypos = y + (ch.size.y - ch.bearing.y) * scale;
 
         float w = ch.size.x * scale;
         float h = ch.size.y * scale;
 
         float vertices[6][4] = {
-            { xpos,     ypos + h,   0.0f, 1.0f },
-            { xpos,     ypos,       0.0f, 0.0f },
-            { xpos + w, ypos,       1.0f, 0.0f },
+            { xpos,     ypos - h,   0.0f, 0.0f },
+            { xpos,     ypos,       0.0f, 1.0f },
+            { xpos + w, ypos,       1.0f, 1.0f },
 
-            { xpos,     ypos + h,   0.0f, 1.0f },
-            { xpos + w, ypos,       1.0f, 0.0f },
-            { xpos + w, ypos + h,   1.0f, 1.0f }
+            { xpos,     ypos - h,   0.0f, 0.0f },
+            { xpos + w, ypos,       1.0f, 1.0f },
+            { xpos + w, ypos - h,   1.0f, 0.0f }
         };
         
         glBindTexture(GL_TEXTURE_2D, ch.textureID);

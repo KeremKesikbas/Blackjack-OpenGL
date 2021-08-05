@@ -36,6 +36,19 @@ class CardManager {
 
         Card* random();
 
+        int getPlayerScore();
+        int getDealerScore();
+
+        void PlayerWins();
+        void DealerWins();
+        void Scorless();
+
+        void openCard();
+
+        void reset();
+
+        void check(bool control);
+
     private:
         std::map<std::string, Card*> loadedCards;
 
@@ -47,6 +60,13 @@ class CardManager {
         Shape* blankCard;
 
         bool open = false;
+
+        bool gameOver = false;
+
+        bool playerWon = false;
+        bool scoreless = false;
+
+        bool timed = false;
 
         int playerScore = 0;
         int dealerScore = 0;

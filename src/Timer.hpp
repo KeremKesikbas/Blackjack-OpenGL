@@ -9,9 +9,8 @@ namespace timer {
     ID createTimer(); // creates and starts timer
 
     double updateTimer(ID id); // returns time diff and restarts timer.
-};
 
-namespace timerIDs {
-}
+    double getTime(ID id);
+};
 
 #endif

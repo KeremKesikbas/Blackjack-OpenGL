@@ -16,7 +16,7 @@ find_package(Freetype CONFIG REQUIRED)
 
 include_directories(${CMAKE_SOURCE_DIR}/Dependencies)
 
-add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
+add_executable(${PROJECT_NAME} WIN32 ${PROJECT_SOURCES})
 
 target_link_libraries(${PROJECT_NAME} glfw)
 target_link_libraries(${PROJECT_NAME} freetype)

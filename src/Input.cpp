@@ -106,7 +106,7 @@ bool inputManager::buttonPressed(int button) {
     auto it = inputManager::mouse_input->buttons.find(button);
 
     if (it != inputManager::mouse_input->buttons.end()) {
-        if (it->second != GLFW_RELEASE) {
+        if (it->second == GLFW_PRESS) {
             return true;
         }
     }
@@ -118,7 +118,7 @@ bool inputManager::buttonReleased(int button) {
     auto it = inputManager::mouse_input->buttons.find(button);
 
     if (it != inputManager::mouse_input->buttons.end()) {
-        if (it->second != GLFW_RELEASE) {
+        if (it->second == GLFW_RELEASE) {
             return true;
         }
     }
@@ -130,7 +130,7 @@ bool inputManager::buttonRepeated(int button) {
     auto it = inputManager::mouse_input->buttons.find(button);
 
     if (it != inputManager::mouse_input->buttons.end()) {
-        if (it->second != GLFW_RELEASE) {
+        if (it->second == GLFW_REPEAT) {
             return true;
         }
     }

@@ -29,3 +29,13 @@ double timer::updateTimer(timer::ID id) {
 
     return diff;
 }
+
+double timer::getTime(timer::ID id) {
+    auto it = timerMap.find(id);
+
+    chrono::steady_clock::time_point now = chrono::steady_clock::now();
+
+	auto diff = chrono::duration_cast<chrono::nanoseconds>(now - it->second).count() * .000000001;
+
+    return diff;
+}

@@ -34,6 +34,9 @@ int Card::getValue() {
 #include "Graphics.hpp"
 #include "TextureManager.hpp"
 #include "Fonts.hpp"
+#include "Timer.hpp"
+
+timer::ID gameOverTimer = timer::createTimer();
 
 using namespace graphics;
 
@@ -133,6 +136,49 @@ Card* CardManager::random() {
 }
 
 void CardManager::renderCards() {
+    float w;
+    float h;
+
+    circDealer->draw();
+    circPlayer->draw();
+
+    fonts::open_sans->getTextSize(std::to_string(playerScore), w, h, 1);
+
+    g->setColor(0, 0, 0, 255);
+
+    g->setPosition(WIDTH/2 - w/2, h/2 + HEIGHT - 75 - cardY);
+    g->renderText(std::to_string(playerScore), 1);
+
+    //////////////
+
+    fonts::open_sans->getTextSize(std::to_string(dealerScore), w, h, 1);
+
+    g->setPosition(WIDTH/2 - w/2, h/2 + 70 + cardY);
+    g->renderText(std::to_string(dealerScore), 1);
+
+    if (gameOver) {
+        if (timer::getTime(gameOverTimer) > 1 && !timed) {
+            timed = true;
+        }
+
+        if (timed) {
+
+            if (scoreless) {
+                Scorless();
+            }
+
+            else if (playerWon) {
+                PlayerWins();
+            }
+
+            else {
+                DealerWins();
+            }
+
+            return;
+        }
+    }
+
     for (int i = 0; i < dealerCards.size(); i++) {
         dealerCards.at(i)->getTexture()->draw();
     }
@@ -144,26 +190,6 @@ void CardManager::renderCards() {
     if (!open) {
         blankCard->draw();
     }
-
-    circDealer->draw();
-    circPlayer->draw();
-
-    float w;
-    float h;
-
-    fonts::open_sans->getTextSize(std::to_string(playerScore), w, h, 1);
-
-    g->setColor(0, 0, 0, 255);
-
-    g->setPosition(WIDTH/2 - w/2, (35 - h/2) + HEIGHT - 110 - cardY);
-    g->renderText(std::to_string(playerScore), 1);
-
-    //////////////
-
-    fonts::open_sans->getTextSize(std::to_string(dealerScore), w, h, 1);
-
-    g->setPosition(WIDTH/2 - w/2, (35 - h/2) + 35 + cardY);
-    g->renderText(std::to_string(dealerScore), 1);
 }
 
 void CardManager::addPlayerCard(Card* card) {
@@ -206,4 +232,129 @@ void CardManager::addDealerCard(Card* card) {
     }
 
     dealerScore += currentValue;
+}
+
+int CardManager::getPlayerScore() {
+    return playerScore;
+}
+
+int CardManager::getDealerScore() {
+    return dealerScore;
+}
+
+void CardManager::openCard() {
+    open = true;
+
+    dealerScore += dealerCards.at(0)->getValue();
+}
+
+void CardManager::reset() {
+    dealerCards.clear();
+    playerCards.clear();
+
+    useableNums.clear();
+
+    for (int i = 0; i < 52; i++) {
+        useableNums.push_back(i);
+    }
+
+    playerScore = 0;
+    dealerScore = 0;
+
+    open = false;
+    gameOver = false;
+    scoreless = false;
+    timed = false;
+
+    addPlayerCard(random());
+    addPlayerCard(random());
+
+    addDealerCard(random());
+    addDealerCard(random());
+}
+
+void CardManager::PlayerWins() {
+    float w;
+    float h;
+
+    fonts::open_sans->getTextSize("Kazanan", w, h, 1);
+    g->setPosition(WIDTH/2 - w/2, HEIGHT - (cardY - 20)/2 + h/2);
+    g->renderText("Kazanan", 1);
+
+    fonts::open_sans->getTextSize("Kaybeden", w, h, 1);
+    g->setPosition(WIDTH/2 - w/2, (cardY + 20)/2 + h/2);
+    g->renderText("Kaybeden", 1);
+}
+
+void CardManager::DealerWins() {
+    float w;
+    float h;
+
+    fonts::open_sans->getTextSize("Kaybeden", w, h, 1);
+    g->setPosition(WIDTH/2 - w/2, HEIGHT - (cardY - 20)/2 + h/2);
+    g->renderText("Kaybeden", 1);
+
+    fonts::open_sans->getTextSize("Kazanan", w, h, 1);
+    g->setPosition(WIDTH/2 - w/2, (cardY + 20)/2 + h/2);
+    g->renderText("Kazanan", 1);
+}
+
+void CardManager::Scorless() {
+    float w;
+    float h;
+
+    fonts::open_sans->getTextSize("Berabere", w, h, 1);
+    g->setPosition(WIDTH/2 - w/2, HEIGHT - (cardY - 20)/2 + h/2);
+    g->renderText("Berabere", 1);
+
+    g->setPosition(WIDTH/2 - w/2, (cardY + 20)/2 + h/2);
+    g->renderText("Berabere", 1);
+}
+
+void CardManager::check(bool control) {
+    if (gameOver) {
+        return;
+    }
+
+    if (playerScore > 21) {
+        playerWon = false;
+        gameOver = true;
+
+        timer::updateTimer(gameOverTimer);
+    }
+
+    if (playerScore == 21) {
+        playerWon = true;
+        gameOver = true;
+
+        timer::updateTimer(gameOverTimer);
+    }
+
+    if (!control) {
+        return;
+    }
+
+    if (dealerScore == playerScore) {
+        scoreless = true;
+    }
+
+    if (dealerScore > 21) {
+        playerWon = true;
+    }
+
+    else if (playerScore > dealerScore) {
+        playerWon = true;
+    }
+
+    else if (dealerScore > playerScore) {
+        playerWon = false;
+    }
+
+    else if (dealerScore == 21) {
+        playerWon = false;
+    }
+
+    gameOver = true;
+
+    timer::updateTimer(gameOverTimer);
 }
